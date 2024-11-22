@@ -1,7 +1,6 @@
 package com.example.navigationcompose.model
 
-class RencanaStudi {
-    val matakuliah: String = "",
-    val ruangkelas: String =""
-
-}
+data class RencanaStudi(
+    val mataKuliah: String = "",
+    val kelas: String = ""
+)
