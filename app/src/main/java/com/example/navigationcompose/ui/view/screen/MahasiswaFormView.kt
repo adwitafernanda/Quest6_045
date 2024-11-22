@@ -1,3 +1,5 @@
+package com.example.navigationcompose.ui.view.screen
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +37,6 @@ import com.example.navigationcompose.R
 
 @Composable
 fun MahasiswaFormView(
-    modifier: Modifier,
     onSubmitButtonClicked: (MutableList<String>) -> Unit,
     onBackButtonClicked: () -> Unit
 ){
@@ -68,7 +69,7 @@ fun MahasiswaFormView(
         ){
             Image(
                 painter = painterResource(
-                    id = R.drawable.bumi
+                    id = R.drawable.logoumy
                 ),
                 contentDescription = "",
                 modifier = Modifier.padding(45.dp)

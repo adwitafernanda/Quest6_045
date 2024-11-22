@@ -1,10 +1,16 @@
 package com.example.navigationcompose.navigation
 
-import android.widget.MediaController
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.navigationcompose.ui.view.screen.DetailView
+import com.example.navigationcompose.ui.view.screen.MahasiswaFormView
 import com.example.navigationcompose.ui.view.screen.RencanaStudyView
 import com.example.navigationcompose.ui.view.screen.SplashView
 import com.example.navigationcompose.ui.view.viewmodel.MahasiswaViewModel
@@ -13,7 +19,7 @@ import com.example.navigationcompose.ui.view.viewmodel.RencanaStudyViewModel
 enum class Halaman{
     Splash,
     Mahasiswa,
-    MataKuliah,
+    Matakuliah,
     Tampil
 }
 
@@ -22,38 +28,56 @@ fun MahasiswaApp(
     modifier: Modifier = Modifier,
     mahasiswaViewModel: MahasiswaViewModel = viewModel(),
     krsViewModel: RencanaStudyViewModel = viewModel(),
-    navController: NavHostController = remember NavController()
+    navController: NavHostController = rememberNavController()
 ){
-    val mahasiswaUiState = mahasiswaViewModel.mahasiswaUistate.collectAsState().value
-    navHost(
+    val mahasiswaUiState = mahasiswaViewModel.dataModel.collectAsState().value
+    val krsUiState = krsViewModel.krsStateUi.collectAsState().value
+
+    NavHost(
         navController = navController,
         startDestination = Halaman.Splash.name,
         modifier = Modifier.padding()
-
     ){
         composable(route = Halaman.Splash.name){
-            SplashView (onMulaiButton = {
-                navController.navigate(
-                    Halaman.Mahasiswa.name
-                )
-            })
+            SplashView(
+                onMulaiButton = {
+                    navController.navigate(Halaman.Mahasiswa.name)
+                }
+            )
         }
+
         composable(route = Halaman.Mahasiswa.name){
-            MahasiswaFormView(
+            MahasiswaFormView (
                 onSubmitButtonClicked = {
-                    MahasiswaViewModel.saveDataMahasiswa(it)
-                    navController.navigate(Halaman.MataKuliah.name)
+                    mahasiswaViewModel.saveDataMhs(it)
+                    navController.navigate(Halaman.Matakuliah.name)
                 },
                 onBackButtonClicked = {
                     navController.popBackStack()
                 }
             )
         }
-        composable(route = Halaman.MataKuliah.name){
+
+        composable(route = Halaman.Matakuliah.name){
             RencanaStudyView(
                 mahasiswa = mahasiswaUiState,
-                onSubmitClicked = {krsViewModel.saveDataKrs(it)},
-                onBackButtonClicked = {navController.popBackStack()}
+                onSubmitButtonClicked = {
+                    krsViewModel.saveDataKRS(it)
+                    navController.navigate(Halaman.Tampil.name)
+                },
+                onBackButtonClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route = Halaman.Tampil.name){
+            DetailView(
+                dataMHS = mahasiswaUiState,
+                dataKRS = krsUiState,
+                onBackButtonClicked = {
+                    navController.popBackStack()
+                }
             )
         }
     }
